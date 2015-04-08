@@ -3,6 +3,9 @@ extern crate getopts;
 use getopts::Options;
 use std::env;
 use std::fs::File;
+use std::io::prelude::*;
+use std::error::Error;
+use std::path::Path;
 
 enum Inventory {
 	Path(String),
@@ -19,11 +22,21 @@ fn print_usage(program: &str, opts: Options) {
 }
 
 fn get_inventory(inv: Inventory) {
-	let path = match inv {
-			Inventory::Path(p) => p
-			Inventory::Nil => "~/inventory.yaml",
-		};
-	let mut f = try!(File::open(path));
+	let path_str = match inv {
+		Inventory::Path(p) => p,
+		Inventory::Nil => "~/inventory.yaml",
+	};
+
+	let path = Path::new(path_str);
+
+/*	let display = path.display();
+
+	let mut file = match File::open(path) {
+		Err(why) => panic!("couldn't open {}: {}",
+		display,
+		Error::description(&why)),
+		Ok(file) => file,
+	};*/
 }
 
 fn main() {
