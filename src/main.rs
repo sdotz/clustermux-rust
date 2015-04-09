@@ -1,11 +1,14 @@
 extern crate getopts;
+extern crate rustc_serialize;
 
-use getopts::Options;
 use std::env;
 use std::fs::File;
-use std::io::prelude::*;
-use std::error::Error;
 use std::path::Path;
+use getopts::Options;
+use std::error::Error;
+use std::io::prelude::*;
+use std::collections::BTreeMap;
+use rustc_serialize::json;
 
 enum Inventory {
 	Path(String),
@@ -22,21 +25,33 @@ fn print_usage(program: &str, opts: Options) {
 }
 
 fn get_inventory(inv: Inventory) {
+	/*let home = match env::home_dir() {
+		Some(ref p) => p.as_path().to_str(),
+		None => println!("Can't get home dir")
+	};*/
+
 	let path_str = match inv {
 		Inventory::Path(p) => p,
-		Inventory::Nil => "~/inventory.yaml",
+		Inventory::Nil => "/Users/206637/inventory.json".to_string(),
 	};
 
-	let path = Path::new(path_str);
+	let path = Path::new(&path_str);
 
-/*	let display = path.display();
+	let display = path.display();
 
 	let mut file = match File::open(path) {
 		Err(why) => panic!("couldn't open {}: {}",
 		display,
 		Error::description(&why)),
 		Ok(file) => file,
-	};*/
+	};
+
+	let mut s = String::new();
+	match file.read_to_string(&mut s) {
+			Err(why) => panic!("couldn't read {}: {}", display,
+							   Error::description(&why)),
+			Ok(_) => print!("{} contains:\n{}", display, s),
+	}
 }
 
 fn main() {
